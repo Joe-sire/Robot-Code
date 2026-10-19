@@ -1,0 +1,71 @@
+const int MOTOR_SPEED_ENA = 6;
+const int MOTOR_SPEED_ENB = 9;
+const int MOTOR_IN1 = 7;
+const int MOTOR_IN2 = 8;
+const int MOTOR_IN3 = 12;
+const int MOTOR_IN4 = 13;
+
+enum RobotState { FORWARDS, BACKWARDS, LEFT, RIGHT, NOT_MOVING };
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(MOTOR_IN1, OUTPUT);
+  pinMode(MOTOR_IN2, OUTPUT);
+  pinMode(MOTOR_IN3, OUTPUT);
+  pinMode(MOTOR_IN4, OUTPUT);
+  pinMode(MOTOR_SPEED_ENA, OUTPUT);
+  pinMode(MOTOR_SPEED_ENB, OUTPUT);
+}
+
+void setState(RobotState newState) {
+  if (newState == currentState && stateInitialized) return;
+
+  currentState = newState;
+  stateInitialized = true;
+
+  int speed = (currentState == NOT_MOVING) ? 0 : 255;
+  analogWrite(MOTOR_SPEED_ENA, speed);
+  analogWrite(MOTOR_SPEED_ENB, speed);
+
+  switch (currentState) {
+    case FORWARDS:
+      digitalWrite(MOTOR_IN1, LOW);
+      digitalWrite(MOTOR_IN2, HIGH);
+      digitalWrite(MOTOR_IN3, LOW);
+      digitalWrite(MOTOR_IN4, HIGH);
+      Serial.println("Forwards");
+      break;
+
+    case BACKWARDS:
+      digitalWrite(MOTOR_IN1, HIGH);
+      digitalWrite(MOTOR_IN2, LOW);
+      digitalWrite(MOTOR_IN3, HIGH);
+      digitalWrite(MOTOR_IN4, LOW);
+      Serial.println("Backwards");
+      break;
+
+    case LEFT:
+      digitalWrite(MOTOR_IN1, LOW);
+      digitalWrite(MOTOR_IN2, HIGH);
+      digitalWrite(MOTOR_IN3, HIGH);
+      digitalWrite(MOTOR_IN4, LOW);
+      Serial.println("Left");
+      break;
+
+    case RIGHT:
+      digitalWrite(MOTOR_IN1, HIGH);
+      digitalWrite(MOTOR_IN2, LOW);
+      digitalWrite(MOTOR_IN3, LOW);
+      digitalWrite(MOTOR_IN4, HIGH);
+      Serial.println("Right");
+      break;
+
+    case NOT_MOVING:
+      digitalWrite(MOTOR_IN1, LOW);
+      digitalWrite(MOTOR_IN2, LOW);
+      digitalWrite(MOTOR_IN3, LOW);
+      digitalWrite(MOTOR_IN4, LOW);
+      Serial.println("Not Moving");
+      break;
+  }
+}
